@@ -1,9 +1,34 @@
+#navbar {
+  width: 100%;
+  overflow: hidden;
+}
+#navbar ul {
+  list-style-type: none;
+}
+#navbar li {
+  float: left;
+}
+#navbar li a {
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+#navbar li a:hover {
+  background-color: lightcoral;
+}
+
 #content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+  /* margin-left: auto;
+  margin-right: auto; */
+  margin: auto;
+  display: block;
+  text-align: center;
 }
 
 #greeting-container {
-  margin-top: 20px;
+  margin-top: 30px;
+  color: blanchedalmond;
 }
+

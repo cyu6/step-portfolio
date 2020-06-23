@@ -7,12 +7,34 @@
     <script src="script.js"></script>
   </head>
   <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+    <div id="navbar">
+        <ul>
+          <li><a href="index.html">home</a></li> 
+          <li><a href="projects.html">projects</a></li> 
+          <li><a href="blog.html">blog</a></li> 
+          <li><a href="photos.html">photos</a></li> 
+          <li><a href="random.html">random</a></li>
+        </ul>
+    </div> 
+    
+    <div id="content">  
+      <div id = "homecontent">
+        <h1>Catherine Yu's Portfolio</h1>
+        <p>This is my portfolio.</p>
+        <p>Click here to get a random message:</p>
+        <button onclick="addRandomGreeting()">Hello</button>
+        <div id="greeting-container"></div>
+        <p>In my free time, I like to listen to music, learn choreography, and read science fiction.</p>
+        
+      </div>
+      <div id="cats">
+        <p>I wish I had a cat.</p>
+        <p>Click below to generate a cat:</p>
+        <button onclick="addRandomCat()">meow</button>
+        <p>Hopefully these images bring you joy.</p>
+        <p>Thanks for visiting my corner of the Internet :)</p> 
+        <div id="cat-container"></div>
+      </div>
     </div>
   </body>
 </html>
