@@ -38,13 +38,13 @@ function addRandomCat() {
   const cat = cats[Math.floor(Math.random() * cats.length)];
 
   // Create img element.
-  var catimg = document.createElement("img");
+  let catimg = document.createElement("img");
   catimg.src = cat;
   catimg.style.width = "500px";
   
   // Add it to the page.
-  const catContainer = document.getElementById('cat-container');
-  const prev = document.getElementById('cat-container').children[0];
+  let catContainer = document.getElementById('cat-container');
+  const prev = catContainer.children[0];
   if (prev !== undefined)  catContainer.replaceChild(catimg, prev);
   else catContainer.appendChild(catimg);
 }
