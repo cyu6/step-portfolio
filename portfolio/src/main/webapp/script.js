@@ -37,7 +37,7 @@ function addRandomCat() {
   // Pick a random greeting.
   const cat = cats[Math.floor(Math.random() * cats.length)];
 
-  // Create img element
+  // Create img element.
   var catimg = document.createElement("img");
   catimg.src = cat;
   catimg.style.width = "500px";
