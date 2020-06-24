@@ -20,8 +20,6 @@
 }
 
 #content {
-  /* margin-left: auto;
-  margin-right: auto; */
   margin: auto;
   display: block;
   text-align: center;
@@ -33,6 +31,7 @@
 }
 
 #homelinks img {
-    width: 50px;
-    padding: 10px;
+  width: 50px;
+  padding: 10px;
 }
+
