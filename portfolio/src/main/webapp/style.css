@@ -50,3 +50,56 @@
   width: 60%;
   margin: 10px;
 }
+
+#photoscontent {
+  margin: auto;
+  width: 90%;
+  text-align: center;
+}
+#photoscontent #photosblocks {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+#photoscontent .photoblock {
+  position: relative;
+  flex: 45%;
+  max-width: 45%;
+  margin: 20px;
+}
+#photoscontent .photoblock h3 {
+  position: absolute;
+  top: 4%;
+  left: 5%;
+  font-size: 1.5vw;
+}
+#photoscontent .photoblock h4 {
+  position: absolute;
+  top: 9%;
+  left: 5%;
+  font-size: 1.2vw;
+}
+#photoscontent .phototext {
+  display: none;
+}
+#photoscontent img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5%;
+  opacity: 1.0;
+}
+#photoscontent p {
+  padding: 10px;
+}
+#photoscontent .photoblock:hover img {
+  opacity: 0.5;
+}
+#photoscontent .photoblock:hover .phototext {
+  display: block;
+}
+@media screen and (max-width: 800px) {
+    #photoscontent .photoblock {
+        flex: 90%;
+        max-width: 90%;
+    }
+}
