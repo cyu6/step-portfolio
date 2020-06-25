@@ -42,7 +42,7 @@
 }
 #blog-content #blog-posts {
   display: grid;
-  grid-template-columns: repeat(3, 20vw);
+  grid-template-columns: auto auto auto;
   grid-gap: 100px 100px;
   padding: 10px;
 }
