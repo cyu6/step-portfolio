@@ -32,7 +32,7 @@ function addRandomGreeting() {
  */
 function addRandomCat() {
   const cats =
-      ["/images/kitten-in-bed.jpg", "/images/sleepy-kitten.jpg"];
+      ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg"];
 
   // Pick a random greeting.
   const cat = cats[Math.floor(Math.random() * cats.length)];
@@ -48,3 +48,10 @@ function addRandomCat() {
   if (prev !== undefined)  catContainer.replaceChild(catimg, prev);
   else catContainer.appendChild(catimg);
 }
+
+const postId1 = "0cb628857f3c4c77bf7f9a879a6ec21d";
+fetch("https://potion-api.now.sh/html?id=" + postId1)
+    .then(res => res.text())
+    .then(text => { document.getElementById("post1").innerHTML = text; 
+});
+
