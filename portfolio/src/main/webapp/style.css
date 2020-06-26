@@ -42,12 +42,12 @@
 }
 #projects-content .project-block {
   background-color: #edafb8;
-  border-radius: 5px;
+  border-radius: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 10px;
   margin: auto;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   text-align: left;
   width: 60%;
 }
