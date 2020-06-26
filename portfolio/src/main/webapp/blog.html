@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div id="navbar">
+      <ul>
+        <li><a href="index.html">home</a></li> 
+        <li><a href="projects.html">projects</a></li> 
+        <li><a href="blog.html">blog</a></li> 
+        <li><a href="photos.html">photos</a></li> 
+        <li><a href="random.html">random</a></li>
+      </ul>
+    </div> 
+
+    <div id="blog-content">  
+      <div class="blog-header">
+        <h1>blog</h1>
+        <h2>a place for me to share my thoughts and experiences</h2> 
+      </div>
+      <div id="blog-posts">
+        <div class="post" data-tilt>
+          <a href="posts/post1.html">
+            <h3>Test Notion Post</h3>
+            <h4>date written</h4>
+            <p>some text about the post...</p>         
+          </a>
+        </div> 
+        <div class="post" data-tilt>
+          <a href="posts/post2.html">
+            <h3>title</h3>
+            <h4>date written</h4>
+            <p>some text about the post...</p>         
+          </a>
+        </div> 
+        <div class="post" data-tilt>
+          <h3>title</h3>
+          <h4>date written</h4>
+          <p>some text about the post...</p>         
+        </div> 
+      </div> 
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
+
+  </body>
+</html>

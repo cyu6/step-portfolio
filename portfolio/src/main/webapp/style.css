@@ -1,6 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap');
+
+h1, 
+h2, 
+h3, 
+h4 {
+  font-family: 'Montserrat', sans-serif;
+}
+p,
+li {
+  font-family: 'Cormorant Garamond', serif;
+}
+
 #navbar {
-  width: 100%;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
   overflow: hidden;
+  width: 100%;
 }
 #navbar ul {
   list-style-type: none;
@@ -10,28 +26,115 @@
 }
 #navbar li a {
   display: block;
-  color: black;
-  text-align: center;
+  color: #006c84;
   padding: 14px 16px;
+  text-align: center;
   text-decoration: none;
 }
 #navbar li a:hover {
-  background-color: lightcoral;
+  background-color: #006c84;
+  border-radius: 5px;
+  color: #fff;
 }
 
 #content {
-  margin: auto;
   display: block;
+  margin: auto;
   text-align: center;
 }
 
 #greeting-container {
   margin-top: 30px;
-  color: blanchedalmond;
 }
 
 #homelinks img {
-  width: 50px;
   padding: 10px;
+  width: 50px;
 }
 
+#projects-content {
+  left: 10%;
+  margin-right: auto;
+  position: relative;
+}
+#projects-content .project-block {
+  border: 1mm double #006c84;
+  margin: 10px;
+  padding: 15px;
+  width: 60%;
+}
+
+#blog-content {
+  margin: auto;
+  text-align: center;
+  width: 80%;
+}
+#blog-content #blog-posts {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 100px 100px;
+}
+#blog-content .post {
+  border: 2mm double #006c84;
+  padding: 50px;
+}
+#blog-content a {
+  color: #000;
+  text-decoration: none;
+}
+#blog-content a:visited {
+  color: #000;
+}
+
+#photos-content {
+  margin: auto;
+  text-align: center;
+  width: 90%;
+}
+#photos-content #photos-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+#photos-content .photo-block {
+  flex: 45%;
+  max-width: 45%;
+  margin: 20px;
+  position: relative;
+}
+#photos-content .photo-block h3 {
+  font-size: 1.5vw;
+  left: 5%;
+  position: absolute;
+  top: 4%;
+}
+#photos-content .photo-block h4 {
+  font-size: 1.2vw;
+  left: 5%;
+  position: absolute;
+  top: 9%;
+}
+#photos-content .photo-text {
+  display: none;
+}
+#photos-content img {
+  border-radius: 5%;
+  height: auto;
+  max-width: 100%;
+  opacity: 1.0;
+}
+#photos-content p {
+  padding: 10px;
+}
+#photos-content .photo-block:hover img {
+  opacity: 0.5;
+}
+#photos-content .photo-block:hover .photo-text {
+  display: block;
+}
+@media screen and (max-width: 800px) {
+  #photos-content .photo-block {
+    flex: 90%;
+    max-width: 90%;
+  }
+}
