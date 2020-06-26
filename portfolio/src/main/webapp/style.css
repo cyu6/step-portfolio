@@ -46,3 +46,30 @@
   padding: 15px;
   width: 60%;
 }
+
+#blog-content {
+  margin: auto;
+  text-align: center;
+  width: 80%;
+}
+#blog-content #blog-posts {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 100px 100px;
+  padding: 10px;
+}
+#blog-content .post {
+  border: 2mm double #006c84;
+  padding: 50px;
+}
+#blog-content a {
+  text-decoration: none;
+}
+#blog-content a:visited {
+  color: #000000;
+}
+
+#post1 img {
+  max-width: 100%;
+  max-height: 70vh;
+}
