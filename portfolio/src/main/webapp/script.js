@@ -48,5 +48,3 @@ function addRandomCat() {
   if (prev !== undefined)  catContainer.replaceChild(catimg, prev);
   else catContainer.appendChild(catimg);
 }
-
-
