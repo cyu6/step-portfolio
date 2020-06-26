@@ -54,4 +54,3 @@ fetch("https://potion-api.now.sh/html?id=" + postId1)
     .then(res => res.text())
     .then(text => { document.getElementById("post1").innerHTML = text; 
 });
-
