@@ -1,4 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap');
+
+h1, 
+h2, 
+h3, 
+h4 {
+  font-family: 'Montserrat', sans-serif;
+}
+p,
+li {
+  font-family: 'Cormorant Garamond', serif;
+}
 
 #navbar {
   font-family: 'Montserrat', sans-serif;
