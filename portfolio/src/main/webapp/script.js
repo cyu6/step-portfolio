@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const GREETING_CHOICES =
+    ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!', 'How are you doing?', 'How do you do?'];
+const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg"];
+const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
+
 /**
  * Adds a random greeting to the page.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!', 'How are you doing?', 'How do you do?'];
-
+addRandomGreeting = () => {
   // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  const greeting = GREETING_CHOICES[Math.floor(Math.random() * GREETING_CHOICES.length)];
 
   // Add it to the page.
   const greetingContainer = document.getElementById('greeting-container');
@@ -30,12 +32,9 @@ function addRandomGreeting() {
 /**
  * Adds a random cat picture to the page.
  */
-function addRandomCat() {
-  const cats =
-      ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg"];
-
+addRandomCat = () => {
   // Pick a random greeting.
-  const cat = cats[Math.floor(Math.random() * cats.length)];
+  const cat = CAT_IMAGES[Math.floor(Math.random() * CAT_IMAGES.length)];
 
   // Create img element.
   let catimg = document.createElement("img");
@@ -49,8 +48,9 @@ function addRandomCat() {
   else catContainer.appendChild(catimg);
 }
 
-const postId1 = "0cb628857f3c4c77bf7f9a879a6ec21d";
-fetch("https://potion-api.now.sh/html?id=" + postId1)
+window.onload = () => {
+  fetch("https://potion-api.now.sh/html?id=" + POST_ID)
     .then(res => res.text())
     .then(text => { document.getElementById("post1").innerHTML = text; 
-});
+  });
+}
