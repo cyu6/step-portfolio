@@ -20,7 +20,7 @@ const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
 /**
  * Adds a random greeting to the page.
  */
-getRandomGreeting = () => {
+addRandomGreeting = () => {
   // Pick a random greeting.
   const greeting = GREETING_CHOICES[Math.floor(Math.random() * GREETING_CHOICES.length)];
 
@@ -48,6 +48,9 @@ addRandomCat = () => {
   else catContainer.appendChild(catimg);
 }
 
+/*
+ * Use Potion API to create page content for blog post 1 from a Notion document.
+ */
 window.onload = () => {
   fetch("https://potion-api.now.sh/html?id=" + POST_ID)
     .then(res => res.text())
@@ -55,8 +58,12 @@ window.onload = () => {
   });
 }
 
-getServerMessage = () => {
-  fetch('/data').then(response => response.text()).then((quote) => {
-    document.getElementById('message-container').innerText = quote;
+/* 
+ * Get message from server and insert it on the home page.
+ */
+window.onload = () => {
+  fetch('/data').then(response => {
+    // response.text() is the server message.
+    document.getElementById('message-container').innerText = response.text();
   });
 }
