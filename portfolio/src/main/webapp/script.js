@@ -54,3 +54,26 @@ window.onload = () => {
     .then(text => { document.getElementById("post1").innerHTML = text; 
   });
 }
+
+/** 
+ * Fetch messages from server and insert them on the home page.
+ */
+window.onload = () => {
+  fetch('/data').then(response => response.json()).then(messages => {
+    const messagesListElement = document.getElementById('messages-container');
+    messagesListElement.innerHTML = '';
+    messagesListElement.appendChild(
+        createParagraphElement(messages[0]));
+    messagesListElement.appendChild(
+        createParagraphElement(messages[1]));
+    messagesListElement.appendChild(
+        createParagraphElement(messages[2]));
+  });
+}
+
+/** Creates a <p> element containing text. */
+createParagraphElement = (text) => {
+  const pElement = document.createElement('p');
+  pElement.innerText = text;
+  return pElement;
+}
