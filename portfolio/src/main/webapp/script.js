@@ -20,7 +20,7 @@ const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
 /**
  * Adds a random greeting to the page.
  */
-addRandomGreeting = () => {
+getRandomGreeting = () => {
   // Pick a random greeting.
   const greeting = GREETING_CHOICES[Math.floor(Math.random() * GREETING_CHOICES.length)];
 
@@ -52,5 +52,11 @@ window.onload = () => {
   fetch("https://potion-api.now.sh/html?id=" + POST_ID)
     .then(res => res.text())
     .then(text => { document.getElementById("post1").innerHTML = text; 
+  });
+}
+
+getServerMessage = () => {
+  fetch('/data').then(response => response.text()).then((quote) => {
+    document.getElementById('message-container').innerText = quote;
   });
 }

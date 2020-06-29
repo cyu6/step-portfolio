@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getServerMessage()">
     <div id="navbar">
       <ul>
         <li><a href="index.html">home</a></li> 
@@ -21,7 +21,8 @@
       <div id = "homecontent">
         <h1>Catherine Yu's Portfolio</h1>
         <p>This is my portfolio.</p>
-        <p>Click here to get a random message:</p>
+        <div id="message-container"></div>
+        <p>Click here to get a random greeting:</p>
         <button onclick="addRandomGreeting()">Hello</button>
         <div id="greeting-container"></div>
         <p>In my free time, I like to listen to music, learn choreography, and read science fiction.</p>
