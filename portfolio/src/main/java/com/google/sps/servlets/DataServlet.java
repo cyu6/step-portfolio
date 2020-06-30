@@ -49,10 +49,6 @@ public class DataServlet extends HttpServlet {
     commentParts.add(email);
     commentParts.add(comment);
 
-    // // Respond with the result.
-    // response.setContentType("application/json;");
-    // response.getWriter().println(commentParts);
-
     // Redirect back to the blog page.
     response.sendRedirect("/blog.html");
   }
