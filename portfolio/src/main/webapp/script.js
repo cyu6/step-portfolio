@@ -48,7 +48,10 @@ addRandomCat = () => {
   else catContainer.appendChild(catimg);
 }
 
-window.onload = () => {
+/*
+ * Use Potion API to create page content for blog post 1 from a Notion document.
+ */
+getBlogPost = () => {
   fetch("https://potion-api.now.sh/html?id=" + POST_ID)
     .then(res => res.text())
     .then(text => { document.getElementById("post1").innerHTML = text; 
@@ -58,20 +61,23 @@ window.onload = () => {
 /** 
  * Fetch messages from server and insert them on the home page.
  */
-window.onload = () => {
+getServerMessages = () => {
   fetch('/data').then(response => response.json()).then(messages => {
     const messagesListElement = document.getElementById('messages-container');
     messagesListElement.innerHTML = '';
-    messagesListElement.appendChild(
-        createParagraphElement(messages[0]));
-    messagesListElement.appendChild(
-        createParagraphElement(messages[1]));
-    messagesListElement.appendChild(
-        createParagraphElement(messages[2]));
+    messages.forEach(element => messagesListElement.appendChild(createParagraphElement(element)));
   });
 }
 
-/** Creates a <p> element containing text. */
+/*
+ * Fetch page data and set up HTML elements on load.
+ */
+window.onload = () => {
+  getBlogPost();
+  getServerMessages();
+}
+
+// Creates a <p> element containing text.
 createParagraphElement = (text) => {
   const pElement = document.createElement('p');
   pElement.innerText = text;

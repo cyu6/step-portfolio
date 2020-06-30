@@ -48,8 +48,7 @@ public class DataServlet extends HttpServlet {
    * Converts a List of strings into a JSON string using the Gson library.
    */
   private String convertToJsonUsingGson(List<String> messages) {
-    Gson gson = new Gson();
-    String json = gson.toJson(messages);
+    String json = new Gson().toJson(messages);
     return json;
   }
 }
