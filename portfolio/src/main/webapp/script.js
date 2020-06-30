@@ -48,9 +48,36 @@ addRandomCat = () => {
   else catContainer.appendChild(catimg);
 }
 
-window.onload = () => {
+/*
+ * Use Potion API to create page content for blog post 1 from a Notion document.
+ */
+getBlogPost = () => {
   fetch("https://potion-api.now.sh/html?id=" + POST_ID)
     .then(res => res.text())
     .then(text => { document.getElementById("post1").innerHTML = text; 
   });
 }
+
+/* 
+ * Get message from server and insert it on the home page.
+ */
+getServerMessage = () => {
+  fetch('/data').then(response => response.text()).then(message => {
+    document.getElementById('message-container').innerText = message;
+  });
+}
+
+/*
+ * Fetch page data and set up HTML elements on load.
+ */
+window.onload = () => {
+  getBlogPost();
+  getServerMessage();
+
+  // Add event listeners to buttons
+  let greetButton = document.getElementById("greeting-button");
+  greetButton.addEventListener("click", addRandomGreeting);
+  let catButton = document.getElementById("random-cat-button");
+  catButton.addEventListener("click", addRandomCat);
+}
+
