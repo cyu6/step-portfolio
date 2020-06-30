@@ -62,11 +62,28 @@ getBlogPost = () => {
  * Fetch comments from server and insert them on blog page.
  */
 getBlogComments = () => {
-  fetch("/data").then(response => response.json()).then((commentParts) => {
+  fetch("/data").then(response => response.json()).then((comments) => {
     const commentsContainer = document.getElementById("submitted-comments-container");
     commentsContainer.innerHTML = '';
-    commentParts.forEach(element => commentsContainer.appendChild(createParagraphElement(element)));
+    comments.forEach(comment => commentsContainer.appendChild(createCommentElement(comment)));
   });
+}
+
+/** Creates an element that represents a comment. */
+function createCommentElement(comment) {
+  const commentBlock = document.createElement('div');
+  commentBlock.className = "comment";
+
+  const nameElement = document.createElement('p');
+  nameElement.innerText = comment.name;
+
+  const commentInputElement = document.createElement('p');
+  commentInputElement.innerText = comment.commentInput;
+
+  commentBlock.appendChild(nameElement);
+  commentBlock.appendChild(commentInputElement);
+  commentBlock.appendChild(document.createElement('hr'));
+  return commentBlock;
 }
 
 /*
