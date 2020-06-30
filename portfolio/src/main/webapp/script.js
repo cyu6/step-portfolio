@@ -48,9 +48,38 @@ addRandomCat = () => {
   else catContainer.appendChild(catimg);
 }
 
-window.onload = () => {
+/*
+ * Use Potion API to create page content for blog post 1 from a Notion document.
+ */
+getBlogPost = () => {
   fetch("https://potion-api.now.sh/html?id=" + POST_ID)
     .then(res => res.text())
     .then(text => { document.getElementById("post1").innerHTML = text; 
   });
+}
+
+/** 
+ * Fetch comments from server and insert them on blog page.
+ */
+getBlogComments = () => {
+  fetch("/data").then(response => response.json()).then((commentParts) => {
+    const commentsContainer = document.getElementById("submitted-comments-container");
+    commentsContainer.innerHTML = '';
+    commentParts.forEach(element => commentsContainer.appendChild(createParagraphElement(element)));
+  });
+}
+
+/*
+ * Fetch page data and set up HTML elements on load.
+ */
+window.onload = () => {
+  getBlogPost();
+  getBlogComments();
+}
+
+// Creates a <p> element containing text.
+createParagraphElement = (text) => {
+  const pElement = document.createElement('p');
+  pElement.innerText = text;
+  return pElement;
 }

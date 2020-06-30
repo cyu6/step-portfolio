@@ -14,7 +14,10 @@
 
 package com.google.sps.servlets;
 
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +27,53 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  private List<String> commentParts;
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("<h1>Hello world!</h1>");
+    String json = convertToJsonUsingGson(commentParts);
+    response.setContentType("application/json;");
+    response.getWriter().println(json);
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get the input from the form.
+    String name = getParameter(request, "name", "Anonymous");
+    String email = getParameter(request, "email", "n/a");
+    String comment = getParameter(request, "comment-input", "");
+
+    // Add input into an ArrayList.
+    commentParts = new ArrayList<>();
+    commentParts.add(name);
+    commentParts.add(email);
+    commentParts.add(comment);
+
+    // // Respond with the result.
+    // response.setContentType("application/json;");
+    // response.getWriter().println(commentParts);
+
+    // Redirect back to the blog page.
+    response.sendRedirect("/blog.html");
+  }
+
+  /**
+   * Converts a List of strings into a JSON string using the Gson library.
+   */
+  private String convertToJsonUsingGson(List<String> commentParts) {
+    String json = new Gson().toJson(commentParts);
+    return json;
+  }
+
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
   }
 }
