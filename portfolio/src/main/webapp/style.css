@@ -25,8 +25,8 @@ li {
   float: left;
 }
 #navbar li a {
-  display: block;
   color: #006c84;
+  display: block;
   padding: 14px 16px;
   text-align: center;
   text-decoration: none;
@@ -53,15 +53,29 @@ li {
 }
 
 #projects-content {
-  left: 10%;
-  margin-right: auto;
-  position: relative;
+  display: block;
+  margin: auto;
+  text-align: center;
 }
 #projects-content .project-block {
-  border: 1mm double #006c84;
-  margin: 10px;
-  padding: 15px;
+  background-color: #edafb8;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10px;
+  margin: auto;
+  margin-bottom: 40px;
+  text-align: left;
   width: 60%;
+}
+#projects-content .column {
+  padding: 30px;
+}
+#projects-content .project-block img {
+  width: 100%;
+}
+#projects-content .project-block a {
+  color: #000;
 }
 
 #blog-content {
