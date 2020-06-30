@@ -67,6 +67,9 @@ getServerMessage = () => {
   });
 }
 
+/*
+ * Fetch page data and set up HTML elements on load.
+ */
 window.onload = () => {
   getBlogPost();
   getServerMessage();
