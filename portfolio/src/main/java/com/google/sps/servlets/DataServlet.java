@@ -36,7 +36,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query("Comment").addSort("timestampMillis", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
@@ -45,10 +45,10 @@ public class DataServlet extends HttpServlet {
       long id = entity.getKey().getId();
       String name = (String) entity.getProperty("name");
       String email = (String) entity.getProperty("email");
-      long timestamp = (long) entity.getProperty("timestamp");
+      long timestampMillis = (long) entity.getProperty("timestampMillis");
       String commentInput = (String) entity.getProperty("commentInput");
 
-      Comment comment = new Comment(name, email, timestamp, commentInput);
+      Comment comment = new Comment(name, email, timestampMillis, commentInput);
       comments.add(comment);
     }
 
@@ -58,7 +58,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long timestamp = System.currentTimeMillis();
+    long timestampMillis = System.currentTimeMillis();
 
     // Get the input from the form.
     String name = getParameter(request, "name", "Anonymous");
@@ -70,7 +70,7 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("email", email);
     commentEntity.setProperty("commentInput", commentInput);
-    commentEntity.setProperty("timestamp", timestamp);
+    commentEntity.setProperty("timestampMillis", timestampMillis);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity); 
