@@ -59,12 +59,14 @@ getBlogPost = () => {
   });
 }
 
-/* 
- * Get message from server and insert it on the home page.
+/** 
+ * Fetch messages from server and insert them on the home page.
  */
-getServerMessage = () => {
-  fetch('/data').then(response => response.text()).then(message => {
-    document.getElementById('message-container').innerText = message;
+getServerMessages = () => {
+  fetch('/data').then(response => response.json()).then(messages => {
+    const messagesListElement = document.getElementById('messages-container');
+    messagesListElement.innerHTML = '';
+    messages.forEach(element => messagesListElement.appendChild(createParagraphElement(element)));
   });
 }
 
@@ -73,8 +75,8 @@ getServerMessage = () => {
  */
 window.onload = () => {
   getBlogPost();
-  getServerMessage();
-
+  getServerMessages();
+  
   // Add event listeners to buttons
   let greetButton = document.getElementById("greeting-button");
   greetButton.addEventListener("click", addRandomGreeting);
@@ -82,3 +84,10 @@ window.onload = () => {
   catButton.addEventListener("click", addRandomCat);
 }
 
+// Creates a <p> element containing text.
+createParagraphElement = (text) => {
+  const pElement = document.createElement('p');
+  pElement.innerText = text;
+  return pElement;
+}
+  
