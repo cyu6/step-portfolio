@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.common.collect.ImmutableList;
 import com.google.sps.data.Comment;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that handles comments data. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+
+  private List<String> commentParts;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -82,16 +85,11 @@ public class DataServlet extends HttpServlet {
   /**
    * Converts a List of strings into a JSON string using the Gson library.
    */
-  private String convertToJsonUsingGson(List<String> commentParts) {
-    String json = new Gson().toJson(commentParts);
-    return json;
+  private static String convertToJsonUsingGson(List<String> commentParts) {
+    return new Gson().toJson(commentParts);
   }
 
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
-   */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     if (value == null) {
       return defaultValue;
