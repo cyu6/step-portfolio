@@ -14,9 +14,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,19 +27,15 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private List<String> messages;
-
-  @Override
-  public void init() {
-    messages = new ArrayList<>();
-    messages.add("I hope your day is going well!");
-    messages.add("Welcome to my website :)");
-    messages.add("Hope you are doing well today!");
-  }
+  private static final ImmutableList MESSAGES = ImmutableList.of(
+    "I hope your day is going well!",
+    "Welcome to my website :)",
+    "Hope you are doing well today!"
+  );
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String json = convertToJsonUsingGson(messages);
+    String json = convertToJsonUsingGson(MESSAGES);
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
@@ -47,7 +43,7 @@ public class DataServlet extends HttpServlet {
   /**
    * Converts a List of strings into a JSON string using the Gson library.
    */
-  private String convertToJsonUsingGson(List<String> messages) {
+  private String convertToJsonUsingGson(ImmutableList messages) {
     String json = new Gson().toJson(messages);
     return json;
   }
