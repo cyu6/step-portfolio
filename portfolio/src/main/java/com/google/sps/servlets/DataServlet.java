@@ -56,16 +56,11 @@ public class DataServlet extends HttpServlet {
   /**
    * Converts a List of strings into a JSON string using the Gson library.
    */
-  private String convertToJsonUsingGson(List<String> commentParts) {
-    String json = new Gson().toJson(commentParts);
-    return json;
+  private static String convertToJsonUsingGson(List<String> commentParts) {
+    return new Gson().toJson(commentParts);
   }
 
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
-   */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     if (value == null) {
       return defaultValue;

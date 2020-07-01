@@ -65,7 +65,9 @@ getBlogComments = () => {
   fetch("/data").then(response => response.json()).then((commentParts) => {
     const commentsContainer = document.getElementById("submitted-comments-container");
     commentsContainer.innerHTML = '';
-    commentParts.forEach(element => commentsContainer.appendChild(createParagraphElement(element)));
+    commentParts.forEach(element => 
+      commentsContainer.appendChild(createParagraphElement(element))
+    );
   });
 }
 
