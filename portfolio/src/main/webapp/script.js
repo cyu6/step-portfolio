@@ -48,7 +48,7 @@ addRandomCat = () => {
   else catContainer.appendChild(catimg);
 }
 
-/*
+/**
  * Use Potion API to create page content for blog post 1 from a Notion document.
  */
 getBlogPost = () => {
@@ -61,8 +61,8 @@ getBlogPost = () => {
 /** 
  * Fetch comments from server and insert them on blog page.
  */
-getBlogComments = () => {
-  fetch("/data").then(response => response.json()).then((comments) => {
+getBlogComments = (commentLimit) => {
+  fetch("/data?comment-limit=" + commentLimit).then(response => response.json()).then((comments) => {
     const commentsContainer = document.getElementById("submitted-comments-container");
     commentsContainer.innerHTML = '';
     comments.forEach(comment => commentsContainer.appendChild(createCommentElement(comment)));
@@ -70,7 +70,7 @@ getBlogComments = () => {
 }
 
 /** Creates an element that represents a comment. */
-function createCommentElement(comment) {
+createCommentElement = (comment) => {
   const commentBlock = document.createElement('div');
   commentBlock.className = "comment";
 
@@ -80,23 +80,42 @@ function createCommentElement(comment) {
   const commentInputElement = document.createElement('p');
   commentInputElement.innerText = comment.commentInput;
 
+  const deleteButtonElement = document.createElement('button');
+  deleteButtonElement.innerText = 'Delete';
+  deleteButtonElement.addEventListener('click', () => {
+    deleteComment(comment);
+    commentBlock.remove();
+  });
+
   commentBlock.appendChild(nameElement);
   commentBlock.appendChild(commentInputElement);
+  commentBlock.appendChild(deleteButtonElement);
   commentBlock.appendChild(document.createElement('hr'));
   return commentBlock;
 }
 
-/*
+/**
  * Fetch page data and set up HTML elements on load.
  */
 window.onload = () => {
   getBlogPost();
-  getBlogComments();
+  
+  let commentLimit = window.localStorage.getItem("comment-limit");
+  if (!commentLimit) commentLimit = 5;
+  getBlogComments(commentLimit);
+
+  // Refresh comment limit value in local storage.
+  let commentInputContainer = document.getElementById("comment-limit");
+  commentInputContainer.onchange = () => {
+    const newLimit = document.getElementById("comment-limit").value;
+    window.localStorage.setItem("comment-limit", newLimit);
+  }
 }
 
-// Creates a <p> element containing text.
-createParagraphElement = (text) => {
-  const pElement = document.createElement('p');
-  pElement.innerText = text;
-  return pElement;
+/** Tells the server to delete the comment. */
+deleteComment = async (comment) => {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  let response = await fetch('/delete-data', {method: 'POST', body: params});
+  getBlogComments(window.localStorage.getItem("comment-limit"));
 }

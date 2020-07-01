@@ -64,7 +64,8 @@ li {
   width: 60%;
 }
 
-#blog-content {
+#blog-content,
+#comments {
   margin: auto;
   text-align: center;
   width: 80%;
@@ -84,6 +85,12 @@ li {
 }
 #blog-content a:visited {
   color: #000;
+}
+#comments {
+  margin-top: 40px;
+}
+#comments form {
+  display: inline;
 }
 
 #photos-content {

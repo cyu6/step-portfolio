@@ -17,6 +17,7 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -38,17 +39,19 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+
+    int limit = Integer.parseInt(request.getParameter("comment-limit"));
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 
     List<Comment> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
+    for (Entity entity : results) {
       long id = entity.getKey().getId();
       String name = (String) entity.getProperty("name");
       String email = (String) entity.getProperty("email");
       long timestamp = (long) entity.getProperty("timestamp");
       String commentInput = (String) entity.getProperty("commentInput");
 
-      Comment comment = new Comment(name, email, timestamp, commentInput);
+      Comment comment = new Comment(id, name, email, timestamp, commentInput);
       comments.add(comment);
     }
 
@@ -58,8 +61,12 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long timestamp = System.currentTimeMillis();
+    if (request.getParameter("comment-limit") != null) {
+      response.sendRedirect("/blog.html"); 
+      return;
+    }
 
+    long timestamp = System.currentTimeMillis();
     // Get the input from the form.
     String name = getParameter(request, "name", "Anonymous");
     String email = getParameter(request, "email", "n/a");
@@ -79,18 +86,6 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/blog.html");
   }
 
-  /**
-   * Converts a List of strings into a JSON string using the Gson library.
-   */
-  private String convertToJsonUsingGson(List<String> commentParts) {
-    String json = new Gson().toJson(commentParts);
-    return json;
-  }
-
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
-   */
   private String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     if (value == null) {

@@ -48,7 +48,6 @@
     <div id="comments">
       <h3>Submit a comment!</h3>
       <form action="/data" method="POST">
-
         <p>Name:</p>
         <input type="text" name="name">
         <br/>
@@ -62,9 +61,14 @@
 
         <input type="submit">
         <input type="reset">
+        <br/><br/>
       </form>
       
       <h3>Comments</h3>
+      <form action="/data" method="POST">
+        <label for="comment-limit">View number of comments:</label>
+        <input type="number" id="comment-limit" name="comment-limit" min="0" max="20">
+      </form>
       <div id="submitted-comments-container"></div>
     </div>
 
