@@ -14,7 +14,8 @@
 
 const GREETING_CHOICES =
     ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!', 'How are you doing?', 'How do you do?'];
-const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg"];
+const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg", "images/kitten-covers.jpg", 
+                    "images/silver-tabby.jpg", "images/teddy-cat.jpg"];
 const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
 
 /**
@@ -75,6 +76,12 @@ getServerMessages = () => {
 window.onload = () => {
   getBlogPost();
   getServerMessages();
+  
+  // Add event listeners to buttons
+  let greetButton = document.getElementById("greeting-button");
+  greetButton.addEventListener("click", addRandomGreeting);
+  let catButton = document.getElementById("random-cat-button");
+  catButton.addEventListener("click", addRandomCat);
 }
 
 // Creates a <p> element containing text.
@@ -83,3 +90,4 @@ createParagraphElement = (text) => {
   pElement.innerText = text;
   return pElement;
 }
+  
