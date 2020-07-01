@@ -14,9 +14,12 @@
 
 package com.google.sps.servlets;
 
+import com.google.gson.Gson;
+import java.io.IOException;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,24 +30,44 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private static final ImmutableList MESSAGES = ImmutableList.of(
-    "I hope your day is going well!",
-    "Welcome to my website :)",
-    "Hope you are doing well today!"
-  );
+  private List<String> commentParts;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String json = convertToJsonUsingGson(MESSAGES);
+    String json = convertToJsonUsingGson(commentParts);
     response.setContentType("application/json;");
     response.getWriter().println(json);
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get the input from the form.
+    String name = getParameter(request, "name", "Anonymous");
+    String email = getParameter(request, "email", "n/a");
+    String comment = getParameter(request, "comment-input", "");
+
+    // Add input into an ArrayList.
+    commentParts = new ArrayList<>();
+    commentParts.add(name);
+    commentParts.add(email);
+    commentParts.add(comment);
+
+    // Redirect back to the blog page.
+    response.sendRedirect("/blog.html");
   }
 
   /**
    * Converts a List of strings into a JSON string using the Gson library.
    */
-  private String convertToJsonUsingGson(ImmutableList messages) {
-    String json = new Gson().toJson(messages);
-    return json;
+  private static String convertToJsonUsingGson(List<String> commentParts) {
+    return new Gson().toJson(commentParts);
+  }
+
+  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
   }
 }

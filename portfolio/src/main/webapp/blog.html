@@ -45,6 +45,28 @@
       </div> 
     </div>
 
+    <div id="comments">
+      <h3>Submit a comment!</h3>
+      <form action="/data" method="POST">
+        <p>Name:</p>
+        <input type="text" name="name" value="First Last">
+        <br/>
+        <p>Email address:</p>
+        <input type="email" name="email" value="firstlast@something.com">
+        <br/>
+        
+        <p>Comment:</p>
+        <textarea name="comment-input">Comment on blog...</textarea>
+        <br/><br/>
+
+        <input type="submit">
+        <input type="reset">
+      </form>
+      
+      <h3>Comments</h3>
+      <div id="submitted-comments-container"></div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
 

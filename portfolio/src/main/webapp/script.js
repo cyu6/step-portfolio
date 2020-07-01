@@ -60,13 +60,15 @@ getBlogPost = () => {
 }
 
 /** 
- * Fetch messages from server and insert them on the home page.
+ * Fetch comments from server and insert them on blog page.
  */
-getServerMessages = () => {
-  fetch('/data').then(response => response.json()).then(messages => {
-    const messagesListElement = document.getElementById('messages-container');
-    messagesListElement.innerHTML = '';
-    messages.forEach(element => messagesListElement.appendChild(createParagraphElement(element)));
+getBlogComments = () => {
+  fetch("/data").then(response => response.json()).then((commentParts) => {
+    const commentsContainer = document.getElementById("submitted-comments-container");
+    commentsContainer.innerHTML = '';
+    commentParts.forEach(element => 
+      commentsContainer.appendChild(createParagraphElement(element))
+    );
   });
 }
 
@@ -75,7 +77,7 @@ getServerMessages = () => {
  */
 window.onload = () => {
   getBlogPost();
-  getServerMessages();
+  getBlogComments();
   
   // Add event listeners to buttons
   let greetButton = document.getElementById("greeting-button");
@@ -90,4 +92,4 @@ createParagraphElement = (text) => {
   pElement.innerText = text;
   return pElement;
 }
-  
+
