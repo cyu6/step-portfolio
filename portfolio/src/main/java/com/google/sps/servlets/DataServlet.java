@@ -35,9 +35,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  private static final String ENTITY_KIND = "Comment";
+  private static final String DEFAULT_INPUT_NAME = "Anonymous";
+  private static final String DEFAULT_INPUT_EMAIL = "N/A";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query(ENTITY_KIND).addSort("timestampMillis", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     int limit = Integer.parseInt(request.getParameter("comment-limit"));
@@ -48,10 +52,10 @@ public class DataServlet extends HttpServlet {
       long id = entity.getKey().getId();
       String name = (String) entity.getProperty("name");
       String email = (String) entity.getProperty("email");
-      long timestamp = (long) entity.getProperty("timestamp");
+      long timestampMillis = (long) entity.getProperty("timestampMillis");
       String commentInput = (String) entity.getProperty("commentInput");
 
-      Comment comment = new Comment(id, name, email, timestamp, commentInput);
+      Comment comment = new Comment(id, name, email, timestampMillis, commentInput);
       comments.add(comment);
     }
 
@@ -61,23 +65,24 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Ignore comment limit form submission and redirect back to blog page.
     if (request.getParameter("comment-limit") != null) {
       response.sendRedirect("/blog.html"); 
       return;
     }
 
-    long timestamp = System.currentTimeMillis();
+    long timestampMillis = System.currentTimeMillis();
     // Get the input from the form.
-    String name = getParameter(request, "name", "Anonymous");
-    String email = getParameter(request, "email", "n/a");
+    String name = getParameter(request, "name", DEFAULT_INPUT_NAME);
+    String email = getParameter(request, "email", DEFAULT_INPUT_EMAIL);
     String commentInput = getParameter(request, "comment-input", "");
 
     // Create a new Comment and add it to the Datastore.
-    Entity commentEntity = new Entity("Comment");
+    Entity commentEntity = new Entity(ENTITY_KIND);
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("email", email);
     commentEntity.setProperty("commentInput", commentInput);
-    commentEntity.setProperty("timestamp", timestamp);
+    commentEntity.setProperty("timestampMillis", timestampMillis);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity); 

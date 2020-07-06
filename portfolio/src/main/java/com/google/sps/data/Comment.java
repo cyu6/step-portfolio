@@ -20,14 +20,14 @@ public final class Comment {
   private final long id;
   private final String name;
   private final String email;
-  private final long timestamp;
+  private final long timestampMillis;
   private final String commentInput;
 
-  public Comment(long id, String name, String email, long timestamp, String commentInput) {
+  public Comment(long id, String name, String email, long timestampMillis, String commentInput) {
     this.id = id;
     this.name = name;
     this.email = email;
-    this.timestamp = timestamp;
+    this.timestampMillis = timestampMillis;
     this.commentInput = commentInput;
   }
 }
