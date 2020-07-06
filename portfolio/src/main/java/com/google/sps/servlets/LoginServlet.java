@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that handles user authentication. */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+  
+  private static final String REDIRECT_URL = "/blog.html";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -41,14 +43,12 @@ public class LoginServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/blog.html";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
 
       response.getWriter().println("logged in");
       response.getWriter().println(logoutUrl);
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/blog.html";
-      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+      String loginUrl = userService.createLoginURL(REDIRECT_URL);
 
       response.getWriter().println("stranger");
       response.getWriter().println(loginUrl);
