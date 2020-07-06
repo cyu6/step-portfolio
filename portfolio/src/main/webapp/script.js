@@ -17,6 +17,7 @@ const GREETING_CHOICES =
 const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg", "images/kitten-covers.jpg", 
                     "images/silver-tabby.jpg", "images/teddy-cat.jpg"];
 const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
+const LOGGED_IN_STATUS = "logged in";
 
 /**
  * Adds a random greeting to the page.
@@ -87,11 +88,40 @@ function createCommentElement(comment) {
   return commentBlock;
 }
 
-/*
+/** Fetch login status and display comments form or login link accordingly. */
+getLoginStatus = () => {
+  fetch("/login").then(response => response.text()).then((result) => {
+    results = result.split("\n");
+    const commentsSubmissionForm = document.getElementById("comment-submission-form");    
+    const loginContainer = document.getElementById("login-link-container");
+    const logoutContainer = document.getElementById("logout-link-container");
+    
+    if (results[0] == LOGGED_IN_STATUS) {
+      commentsSubmissionForm.style.display = "inline";
+
+      const logoutElement = document.getElementById("logout-link");
+      logoutElement.href = results[1];
+      
+      loginContainer.style.display = "none";
+      logoutContainer.style.display = "inline";
+    } else {
+      commentsSubmissionForm.style.display = "none";
+
+      const loginElement = document.getElementById("login-link");
+      loginElement.href = results[0];
+
+      loginContainer.style.display = "inline";
+      logoutContainer.style.display = "none";
+    }
+  });
+}
+
+/**
  * Fetch page data and set up HTML elements on load.
  */
 window.onload = () => {
   getBlogPost();
+  getLoginStatus();
   getBlogComments();
   
   // Add event listeners to buttons
@@ -101,9 +131,3 @@ window.onload = () => {
   catButton.addEventListener("click", addRandomCat);
 }
 
-// Creates a <p> element containing text.
-createParagraphElement = (text) => {
-  const pElement = document.createElement('p');
-  pElement.innerText = text;
-  return pElement;
-}

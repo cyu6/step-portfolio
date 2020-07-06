@@ -12,7 +12,6 @@ p {
 }
 
 #navbar {
-  font-family: 'Montserrat', sans-serif;
   font-size: 20px;
   overflow: hidden;
   width: 100%;
@@ -21,6 +20,7 @@ p {
   list-style-type: none;
 }
 #navbar li {
+  font-family: 'Montserrat', sans-serif;
   float: left;
 }
 #navbar li a {
@@ -77,7 +77,8 @@ p {
   color: #000;
 }
 
-#blog-content {
+#blog-content,
+#comments {
   margin: auto;
   text-align: center;
   width: 80%;
@@ -97,6 +98,14 @@ p {
 }
 #blog-content a:visited {
   color: #000;
+}
+#comments {
+  margin-top: 40px;
+}
+#comment-submission-form,
+#login-link-container,
+#logout-link-container {
+  display: none;
 }
 
 #photos-content {

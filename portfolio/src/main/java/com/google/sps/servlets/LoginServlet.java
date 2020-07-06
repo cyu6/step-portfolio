@@ -41,17 +41,17 @@ public class LoginServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/login";
+      String urlToRedirectToAfterUserLogsOut = "/blog.html";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
-      response.getWriter().println("<p>" + userEmail + " is logged in</p>");
-      response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
+      response.getWriter().println("logged in");
+      response.getWriter().println(logoutUrl);
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/login";
+      String urlToRedirectToAfterUserLogsIn = "/blog.html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
 
-      response.getWriter().println("<p>Hello stranger.</p>");
-      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+      response.getWriter().println("stranger");
+      response.getWriter().println(loginUrl);
     }
   }
 
