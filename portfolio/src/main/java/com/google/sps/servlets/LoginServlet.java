@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that handles user authentication. */
+/** Servlet that checks user login status and provides a login/logout URL accordingly. */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
   
