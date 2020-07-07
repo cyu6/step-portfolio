@@ -17,6 +17,7 @@ const GREETING_CHOICES =
 const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg", "images/kitten-covers.jpg", 
                     "images/silver-tabby.jpg", "images/teddy-cat.jpg"];
 const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
+const DEFAULT_COMMENT_LIMIT = 5;
 const LOGGED_IN_STATUS = "logged in";
 
 /**
@@ -140,7 +141,7 @@ window.onload = () => {
   getLoginStatus();
   
   let commentLimit = window.localStorage.getItem("comment-limit");
-  if (!commentLimit) commentLimit = 5;
+  if (!commentLimit) commentLimit = DEFAULT_COMMENT_LIMIT;
   getBlogComments(commentLimit);
 
   // Refresh comment limit value in local storage.
