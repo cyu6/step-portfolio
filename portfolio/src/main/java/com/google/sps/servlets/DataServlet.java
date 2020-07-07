@@ -17,11 +17,11 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
-import com.google.common.collect.ImmutableList;
 import com.google.sps.data.Comment;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,23 +35,26 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private List<String> commentParts;
+  private static final String DEFAULT_INPUT_NAME = "Anonymous";
+  private static final String DEFAULT_INPUT_EMAIL = "N/A";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestampMillis", SortDirection.DESCENDING);
+    Query query = new Query(Comment.getEntityKind()).addSort("timestampMillis", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+
+    int limit = Integer.parseInt(request.getParameter("comment-limit"));
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 
     List<Comment> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
+    for (Entity entity : results) {
       long id = entity.getKey().getId();
       String name = (String) entity.getProperty("name");
       String email = (String) entity.getProperty("email");
       long timestampMillis = (long) entity.getProperty("timestampMillis");
       String commentInput = (String) entity.getProperty("commentInput");
 
-      Comment comment = new Comment(name, email, timestampMillis, commentInput);
+      Comment comment = new Comment(id, name, email, timestampMillis, commentInput);
       comments.add(comment);
     }
 
@@ -61,15 +64,20 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long timestampMillis = System.currentTimeMillis();
+    // Ignore comment limit form submission and redirect back to blog page.
+    if (request.getParameter("comment-limit") != null) {
+      response.sendRedirect("/blog.html"); 
+      return;
+    }
 
+    long timestampMillis = System.currentTimeMillis();
     // Get the input from the form.
-    String name = getParameter(request, "name", "Anonymous");
-    String email = getParameter(request, "email", "n/a");
+    String name = getParameter(request, "name", DEFAULT_INPUT_NAME);
+    String email = getParameter(request, "email", DEFAULT_INPUT_EMAIL);
     String commentInput = getParameter(request, "comment-input", "");
 
     // Create a new Comment and add it to the Datastore.
-    Entity commentEntity = new Entity("Comment");
+    Entity commentEntity = new Entity(Comment.getEntityKind());
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("email", email);
     commentEntity.setProperty("commentInput", commentInput);
@@ -82,14 +90,7 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/blog.html");
   }
 
-  /**
-   * Converts a List of strings into a JSON string using the Gson library.
-   */
-  private static String convertToJsonUsingGson(List<String> commentParts) {
-    return new Gson().toJson(commentParts);
-  }
-
-  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     if (value == null) {
       return defaultValue;

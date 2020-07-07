@@ -77,7 +77,8 @@ p {
   color: #000;
 }
 
-#blog-content {
+#blog-content,
+#comments {
   margin: auto;
   text-align: center;
   width: 80%;
@@ -97,6 +98,12 @@ p {
 }
 #blog-content a:visited {
   color: #000;
+}
+#comments {
+  margin-top: 40px;
+}
+#comments form {
+  display: inline;
 }
 
 #photos-content {
