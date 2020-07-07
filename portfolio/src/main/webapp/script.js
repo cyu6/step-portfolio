@@ -124,7 +124,7 @@ getLoginStatus = () => {
       commentsSubmissionForm.style.display = "none";
 
       const loginElement = document.getElementById("login-link");
-      loginElement.href = results[0];
+      loginElement.href = results[1];
 
       loginContainer.style.display = "inline";
       logoutContainer.style.display = "none";

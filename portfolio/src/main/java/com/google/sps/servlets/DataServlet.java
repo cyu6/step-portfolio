@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.io.IOException;
@@ -36,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
 
   private static final String DEFAULT_INPUT_NAME = "Anonymous";
-  private static final String DEFAULT_INPUT_EMAIL = "N/A";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -73,8 +74,11 @@ public class DataServlet extends HttpServlet {
     long timestampMillis = System.currentTimeMillis();
     // Get the input from the form.
     String name = getParameter(request, "name", DEFAULT_INPUT_NAME);
-    String email = getParameter(request, "email", DEFAULT_INPUT_EMAIL);
     String commentInput = getParameter(request, "comment-input", "");
+
+    // Get (logged in) user's email.
+    UserService userService = UserServiceFactory.getUserService();
+    String email = userService.getCurrentUser().getEmail();
 
     // Create a new Comment and add it to the Datastore.
     Entity commentEntity = new Entity(Comment.getEntityKind());

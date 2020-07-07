@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
       response.getWriter().println("logged in");
       response.getWriter().println(logoutUrl);
     } else {
-      String loginUrl = userService.createLoginURL(REDIRECT_URL);
+      String loginUrl = userService.createLoginURL("/blog.html");
 
       response.getWriter().println("stranger");
       response.getWriter().println(loginUrl);
