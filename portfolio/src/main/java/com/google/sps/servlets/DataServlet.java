@@ -35,13 +35,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private static final String ENTITY_KIND = "Comment";
   private static final String DEFAULT_INPUT_NAME = "Anonymous";
   private static final String DEFAULT_INPUT_EMAIL = "N/A";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query(ENTITY_KIND).addSort("timestampMillis", SortDirection.DESCENDING);
+    Query query = new Query(Comment.getEntityKind()).addSort("timestampMillis", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     int limit = Integer.parseInt(request.getParameter("comment-limit"));
@@ -78,7 +77,7 @@ public class DataServlet extends HttpServlet {
     String commentInput = getParameter(request, "comment-input", "");
 
     // Create a new Comment and add it to the Datastore.
-    Entity commentEntity = new Entity(ENTITY_KIND);
+    Entity commentEntity = new Entity(Comment.getEntityKind());
     commentEntity.setProperty("name", name);
     commentEntity.setProperty("email", email);
     commentEntity.setProperty("commentInput", commentInput);

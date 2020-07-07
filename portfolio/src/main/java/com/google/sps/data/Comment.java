@@ -17,6 +17,8 @@ package com.google.sps.data;
 /** A comment on the blog page. */
 public final class Comment {
 
+  private static final String ENTITY_KIND = "Comment";
+
   private final long id;
   private final String name;
   private final String email;
@@ -29,5 +31,9 @@ public final class Comment {
     this.email = email;
     this.timestampMillis = timestampMillis;
     this.commentInput = commentInput;
+  }
+
+  public static String getEntityKind() {
+    return ENTITY_KIND;
   }
 }
