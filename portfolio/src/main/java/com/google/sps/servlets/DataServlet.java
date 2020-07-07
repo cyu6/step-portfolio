@@ -94,7 +94,7 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/blog.html");
   }
 
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     if (value == null) {
       return defaultValue;
