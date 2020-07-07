@@ -46,13 +46,16 @@
     </div>
 
     <div id="comments">
-      <h3>Submit a comment!</h3>
-      <form action="/data" method="POST">
+      <form id="comment-submission-form" method="POST" enctype="multipart/form-data">
+        <h3>Submit a comment!</h3>
         <p>Name:</p>
         <input type="text" name="name">
         <br/>
         <p>Email address:</p>
         <input type="email" name="email">
+        <br/>
+        <p>Upload a file:</p>
+        <input type="file" name="file">
         <br/>
         
         <p>Comment:</p>

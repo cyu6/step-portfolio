@@ -17,6 +17,7 @@ const GREETING_CHOICES =
 const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg", "images/kitten-covers.jpg", 
                     "images/silver-tabby.jpg", "images/teddy-cat.jpg"];
 const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
+const PLACEHOLDER_URL = "images/squishycat.jpeg";
 
 /**
  * Adds a random greeting to the page.
@@ -81,6 +82,14 @@ createCommentElement = (comment) => {
   const commentInputElement = document.createElement('p');
   commentInputElement.innerText = comment.commentInput;
 
+  const fileElement = document.createElement('img');
+  fileElement.style.width = '50px';
+  if (comment.fileUrl != null) {
+    fileElement.src = comment.fileUrl;
+  } else {
+    fileElement.src = PLACEHOLDER_URL;
+  }
+
   const deleteButtonElement = document.createElement('button');
   deleteButtonElement.innerText = 'Delete';
   deleteButtonElement.addEventListener('click', () => {
@@ -90,6 +99,8 @@ createCommentElement = (comment) => {
 
   commentBlock.appendChild(nameElement);
   commentBlock.appendChild(commentInputElement);
+  commentBlock.appendChild(fileElement);
+  commentBlock.appendChild(document.createElement('br'));
   commentBlock.appendChild(deleteButtonElement);
   commentBlock.appendChild(document.createElement('hr'));
   return commentBlock;
@@ -103,11 +114,20 @@ deleteComment = async (comment) => {
   getBlogComments(window.localStorage.getItem("comment-limit"));
 }
 
+/** Fetch Blobstore URL and set it to HTML form. */
+fetchBlobstoreUrlAndSetForm = () => {
+  fetch("/blobstore-upload-url").then(response => response.text()).then((urlstring) => {
+    const commentsForm = document.getElementById('comment-submission-form');
+    commentsForm.action = urlstring;
+  });
+}
+
 /**
  * Fetch page data and set up HTML elements on load.
  */
 window.onload = () => {
   getBlogPost();
+  fetchBlobstoreUrlAndSetForm();
   
   let commentLimit = window.localStorage.getItem("comment-limit");
   if (!commentLimit) commentLimit = 5;
