@@ -14,7 +14,8 @@
 
 const GREETING_CHOICES =
     ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!', 'How are you doing?', 'How do you do?'];
-const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg"];
+const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg", "images/kitten-covers.jpg", 
+                    "images/silver-tabby.jpg", "images/teddy-cat.jpg"];
 const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
 
 /**
@@ -94,6 +95,14 @@ createCommentElement = (comment) => {
   return commentBlock;
 }
 
+/** Tells the server to delete the comment. */
+deleteComment = async (comment) => {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  let response = await fetch('/delete-data', {method: 'POST', body: params});
+  getBlogComments(window.localStorage.getItem("comment-limit"));
+}
+
 /**
  * Fetch page data and set up HTML elements on load.
  */
@@ -110,12 +119,11 @@ window.onload = () => {
     const newLimit = document.getElementById("comment-limit").value;
     window.localStorage.setItem("comment-limit", newLimit);
   }
+  
+  // Add event listeners to buttons
+  let greetButton = document.getElementById("greeting-button");
+  greetButton.addEventListener("click", addRandomGreeting);
+  let catButton = document.getElementById("random-cat-button");
+  catButton.addEventListener("click", addRandomCat);
 }
 
-/** Tells the server to delete the comment. */
-deleteComment = async (comment) => {
-  const params = new URLSearchParams();
-  params.append('id', comment.id);
-  let response = await fetch('/delete-data', {method: 'POST', body: params});
-  getBlogComments(window.localStorage.getItem("comment-limit"));
-}
