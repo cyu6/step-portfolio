@@ -129,7 +129,7 @@ public class DataServlet extends HttpServlet {
 
     // Make sure there is only one input.
     if (blobKeys.size() != 1) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("There should only be one file input.");
     }
 
     // Our form only contains a single file input, so get the first index.
