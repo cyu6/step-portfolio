@@ -127,3 +127,33 @@ window.onload = () => {
   catButton.addEventListener("click", addRandomCat);
 }
 
+/**
+ * Create a chart and add it to the random.html page.
+ */
+drawChart = () => {
+  const data = new google.visualization.DataTable();
+  data.addColumn('string', 'Plant');
+  data.addColumn('number', 'Amount');
+  data.addRows([
+    ['Clover', 3],
+    ['Lavender', 9],
+    ['Poppies', 6],
+    ['Basil', 2]
+  ]);
+
+  const options = {
+    'title': 'Plants in my garden', 
+    'width': 400, 
+    'height': 300
+  };
+
+  const chart = new google.visualization.PieChart(
+    document.getElementById('chart-container')
+  );
+  chart.draw(data, options);
+}
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+
