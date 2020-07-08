@@ -32,6 +32,7 @@ import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.io.IOException;
+import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -156,6 +157,9 @@ public class DataServlet extends HttpServlet {
       return Optional.of(url.getPath());
     } catch (MalformedURLException e) {
       return Optional.of(imagesService.getServingUrl(options));
+    } catch (IllegalArgumentException e) {
+      // Uploaded file was not a valid image file. 
+      return Optional.empty();
     }
   }
 }
