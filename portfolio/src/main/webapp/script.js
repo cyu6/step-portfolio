@@ -17,6 +17,7 @@ const GREETING_CHOICES =
 const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg", "images/kitten-covers.jpg", 
                     "images/silver-tabby.jpg", "images/teddy-cat.jpg"];
 const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
+const DEFAULT_COMMENT_LIMIT = 5;
 const PLACEHOLDER_URL = "images/squishycat.jpeg";
 const LOGGED_IN_STATUS = "logged in";
 
@@ -65,6 +66,7 @@ getBlogPost = () => {
  * Fetch comments from server and insert them on blog page.
  */
 getBlogComments = (commentLimit) => {
+  if (commentLimit === null) commentLimit = DEFAULT_COMMENT_LIMIT;
   fetch("/data?comment-limit=" + commentLimit).then(response => response.json()).then((comments) => {
     const commentsContainer = document.getElementById("submitted-comments-container");
     commentsContainer.innerHTML = '';
@@ -120,6 +122,7 @@ fetchBlobstoreUrlAndSetForm = () => {
   fetch("/blobstore-upload-url").then(response => response.text()).then((urlstring) => {
     const commentsForm = document.getElementById('comment-submission-form');
     commentsForm.action = urlstring;
+  });
 }
                                                                         
 /** Fetch login status and display comments form or login link accordingly. */
@@ -155,12 +158,9 @@ getLoginStatus = () => {
  */
 window.onload = () => {
   getBlogPost();
+  getBlogComments(window.localStorage.getItem("comment-limit"));
   fetchBlobstoreUrlAndSetForm();
   getLoginStatus();
-  
-  let commentLimit = window.localStorage.getItem("comment-limit");
-  if (!commentLimit) commentLimit = 5;
-  getBlogComments(commentLimit);
 
   // Refresh comment limit value in local storage.
   let commentInputContainer = document.getElementById("comment-limit");
