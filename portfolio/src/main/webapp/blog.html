@@ -46,6 +46,13 @@
     </div>
 
     <div id="comments">
+      <div id="login-link-container">
+        <a id="login-link" href="">Log in here.</a>
+      </div>
+      <div id="logout-link-container">
+        <a id="logout-link" href="">Log out here.</a>
+      </div>
+
       <form id="comment-submission-form" method="POST" enctype="multipart/form-data">
         <h3>Submit a comment!</h3>
         <p>Name:</p>
@@ -56,15 +63,13 @@
         <br/>
         <p>Upload a file:</p>
         <input type="file" name="file">
-        <br/>
-        
+        <br/>        
         <p>Comment:</p>
         <textarea name="comment-input">Comment on blog...</textarea>
         <br/><br/>
 
         <input type="submit">
         <input type="reset">
-        <br/><br/>
       </form>
       
       <h3>Comments</h3>
