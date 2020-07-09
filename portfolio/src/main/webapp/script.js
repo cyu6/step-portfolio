@@ -64,7 +64,8 @@ getBlogPost = () => {
 /** 
  * Fetch comments from server and insert them on blog page.
  */
-getBlogComments = (commentLimit = DEFAULT_COMMENT_LIMIT) => {
+getBlogComments = (commentLimit) => {
+  if (commentLimit === null) commentLimit = DEFAULT_COMMENT_LIMIT;
   fetch("/data?comment-limit=" + commentLimit).then(response => response.json()).then((comments) => {
     const commentsContainer = document.getElementById("submitted-comments-container");
     commentsContainer.innerHTML = '';
@@ -102,11 +103,7 @@ deleteComment = async (comment) => {
   const params = new URLSearchParams();
   params.append('id', comment.id);
   let response = await fetch('/delete-data', {method: 'POST', body: params});
-
-  // Refresh blog comments after deleting the comment.
-  let commentLimit = window.localStorage.getItem("comment-limit");
-  if (!commentLimit) getBlogComments();
-  else getBlogComments(commentLimit);
+  getBlogComments(window.localStorage.getItem("comment-limit"));
 }
 
 /** Fetch login status and display comments form or login link accordingly. */
@@ -143,10 +140,7 @@ getLoginStatus = () => {
 window.onload = () => {
   getBlogPost();
   getLoginStatus();
-  
-  let commentLimit = window.localStorage.getItem("comment-limit");
-  if (!commentLimit) getBlogComments();
-  else getBlogComments(commentLimit);
+  getBlogComments(window.localStorage.getItem("comment-limit"));
 
   // Refresh comment limit value in local storage.
   let commentInputContainer = document.getElementById("comment-limit");
