@@ -62,14 +62,14 @@ public class DataServlet extends HttpServlet {
 
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : results) {
-      long id = entity.getKey().getId();
-      String name = (String) entity.getProperty("name");
-      String email = (String) entity.getProperty("email");
-      long timestampMillis = (long) entity.getProperty("timestampMillis");
-      String commentInput = (String) entity.getProperty("commentInput");
-      String fileUrl = (String) entity.getProperty("fileUrl");
-
-      Comment comment = new Comment(id, name, email, timestampMillis, commentInput, fileUrl);
+      Comment comment = new Comment(
+        entity.getKey().getId(),
+        (String) entity.getProperty("name"),
+        (String) entity.getProperty("email"),
+        (long) entity.getProperty("timestampMillis"),
+        (String) entity.getProperty("commentInput"),
+        (String) entity.getProperty("fileUrl")
+      );
       comments.add(comment);
     }
 
@@ -100,7 +100,7 @@ public class DataServlet extends HttpServlet {
 
     // Handle file upload input from form.
     getUploadedFileUrl(request, "file").ifPresent(fileUrl -> commentEntity.setProperty("fileUrl", fileUrl));
-    
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity); 
 
@@ -142,9 +142,6 @@ public class DataServlet extends HttpServlet {
       blobstoreService.delete(blobKey);
       return Optional.empty();
     }
-
-    // We could check the validity of the file here, e.g. to make sure it's an image file
-    // https://stackoverflow.com/q/10779564/873165
 
     // Use ImagesService to get a URL that points to the uploaded file.
     ImagesService imagesService = ImagesServiceFactory.getImagesService();
