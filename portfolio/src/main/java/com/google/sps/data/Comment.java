@@ -24,13 +24,16 @@ public final class Comment {
   private final String email;
   private final long timestampMillis;
   private final String commentInput;
+  private final String fileUrl;
 
-  public Comment(long id, String name, String email, long timestampMillis, String commentInput) {
+  public Comment(long id, String name, String email, long timestampMillis, 
+                 String commentInput, String fileUrl) {
     this.id = id;
     this.name = name;
     this.email = email;
     this.timestampMillis = timestampMillis;
     this.commentInput = commentInput;
+    this.fileUrl = fileUrl;
   }
 
   public static String getEntityKind() {
