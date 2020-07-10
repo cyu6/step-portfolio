@@ -128,9 +128,9 @@ window.onload = () => {
 }
 
 /**
- * Create a chart and add it to the random.html page.
+ * Create a hard-coded chart about plants and add it to the random.html page.
  */
-drawChart = () => {
+drawPlantChart = () => {
   const data = new google.visualization.DataTable();
   data.addColumn('string', 'Plant');
   data.addColumn('number', 'Amount');
@@ -148,12 +148,38 @@ drawChart = () => {
   };
 
   const chart = new google.visualization.PieChart(
-    document.getElementById('chart-container')
+    document.getElementById('plant-chart-container')
   );
   chart.draw(data, options);
 }
 
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
+/**
+ * Fetch data about COVID-19 and use it to create a chart.
+ */
+drawCovidChart = () => {
+  fetch('/covid-data').then(response => response.json())
+  .then((covidTotals) => {
+    const data = new google.visualization.DataTable();
+    data.addColumn('date', 'Date');
+    data.addColumn('number', 'Total Cases');
+    data.addColumn('number', 'New Cases');
+    Object.keys(covidTotals).forEach((date) => {
+      data.addRow([new Date(date), covidTotals[date][0], covidTotals[date][1]]);
+    });
 
+    const options = {
+      'title': 'COVID-19 total and new cases worldwide', 
+      'width': 600, 
+      'height': 500
+    };
+
+    const chart = new google.visualization.AreaChart(
+        document.getElementById('covid-chart-container'));
+    chart.draw(data, options);
+  });
+}
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawPlantChart);
+google.charts.setOnLoadCallback(drawCovidChart);
 
