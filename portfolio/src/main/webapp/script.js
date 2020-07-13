@@ -179,14 +179,6 @@ drawCovidChart = () => {
   });
 }
 
-// // Check if one day has passed.
-// hasOneDayPassed = () => {
-//   let date = new Date().toLocaleDateString();
-//   if (window.localStorage.getItem('local-date') == date) return false;
-//   window.localStorage.setItem('local-date', date);
-//   return true;
-// }
-
 /**
  * Fetch data of submitted comments and create a line chart.
  */
