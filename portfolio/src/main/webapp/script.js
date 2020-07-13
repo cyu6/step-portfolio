@@ -179,7 +179,43 @@ drawCovidChart = () => {
   });
 }
 
+// // Check if one day has passed.
+// hasOneDayPassed = () => {
+//   let date = new Date().toLocaleDateString();
+//   if (window.localStorage.getItem('local-date') == date) return false;
+//   window.localStorage.setItem('local-date', date);
+//   return true;
+// }
+
+/**
+ * Fetch data of submitted comments and create a line chart.
+ */
+drawCommentsChart = () => {
+  fetch('/comment-data')
+  .then(response => response.json()).then((totalDailyComments) => {
+    const data = new google.visualization.DataTable();
+    data.addColumn('datetime', 'Date');
+    data.addColumn('number', 'Amount');
+    Object.keys(totalDailyComments).forEach((date) => {
+      data.addRow([new Date(date), totalDailyComments[date]]);
+    });
+
+    const options = {
+      'title': 'Number of submitted comments', 
+      'width': 400, 
+      'height': 300
+    };
+
+    const chart = new google.visualization.LineChart(
+      document.getElementById('comment-chart-container')
+    );
+    
+    chart.draw(data, options);
+  });
+}
+
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawPlantChart);
 google.charts.setOnLoadCallback(drawCovidChart);
+google.charts.setOnLoadCallback(drawCommentsChart);
 
