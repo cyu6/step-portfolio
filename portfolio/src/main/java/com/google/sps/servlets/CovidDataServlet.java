@@ -16,8 +16,15 @@ package com.google.sps.servlets;
 
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.lang.NumberFormatException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Scanner;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,8 +35,20 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/covid-data")
 public class CovidDataServlet extends HttpServlet {
 
-  private LinkedHashMap<String, ArrayList<Integer>> covidTotals = new LinkedHashMap<>();
+  private static class CovidData {
+    private final int totalCases;
+    private final int newCases;
 
+    private CovidData(int totalCases, int newCases) {
+      this.totalCases = totalCases;
+      this.newCases = newCases;
+    }
+  }
+
+  // Map from date to total cases and new cases of COVID-19.
+  private LinkedHashMap<Date, Object> covidTotals = new LinkedHashMap<>();
+  private static final Logger LOGGER = Logger.getLogger( CovidDataServlet.class.getName() );
+  
   @Override
   public void init() {
     Scanner scanner = new Scanner(getServletContext().getResourceAsStream(
@@ -38,13 +57,40 @@ public class CovidDataServlet extends HttpServlet {
       String line = scanner.nextLine();
       String[] cells = line.split(",");
 
-      ArrayList<Integer> totals = new ArrayList<>();
+      Date date = new Date();
+      try {
+        date = new SimpleDateFormat("yyyy-MM-dd").parse(cells[0]);
+      } catch (ParseException pex) {
+        pex.printStackTrace();
+        LOGGER.log(Level.WARNING, "invalid date string");
+      }    
 
-      String date = cells[0];
-      totals.add(Integer.valueOf(cells[1]));
-      totals.add(Integer.valueOf(cells[2]));
+      // Validation checks for parsing COVID-19 numbers.
+      int totalCases = 0;
+      int newCases = 0;
+      try {
+        totalCases = Integer.valueOf(cells[1]);
+      } catch (NumberFormatException nfex) {
+        nfex.printStackTrace();
+        LOGGER.log(Level.WARNING, "invalid integer for total cases");
+      }
+      if (totalCases < 0) {
+          LOGGER.log(Level.WARNING, "number of total cases cannot be negative");
+      }
+      try {
+        newCases = Integer.valueOf(cells[2]);
+      } catch (NumberFormatException nfex) {
+        nfex.printStackTrace();
+        LOGGER.log(Level.WARNING, "invalid integer for new cases");
+      }
+      if (newCases < 0) {
+        LOGGER.log(Level.WARNING, "number of new cases cannot be negative");
+        continue;
+      }
 
-      covidTotals.put(date, totals);
+      CovidData newData = new CovidData(totalCases, newCases);
+      
+      covidTotals.put(date, newData);
     }
     scanner.close();
   }

@@ -108,7 +108,7 @@ deleteComment = async (comment) => {
  */
 window.onload = () => {
   getBlogPost();
-  
+
   let commentLimit = window.localStorage.getItem("comment-limit");
   if (!commentLimit) commentLimit = 5;
   getBlogComments(commentLimit);
@@ -125,6 +125,7 @@ window.onload = () => {
   greetButton.addEventListener("click", addRandomGreeting);
   let catButton = document.getElementById("random-cat-button");
   catButton.addEventListener("click", addRandomCat);
+
 }
 
 /**
@@ -164,7 +165,7 @@ drawCovidChart = () => {
     data.addColumn('number', 'Total Cases');
     data.addColumn('number', 'New Cases');
     Object.keys(covidTotals).forEach((date) => {
-      data.addRow([new Date(date), covidTotals[date][0], covidTotals[date][1]]);
+      data.addRow([new Date(date), covidTotals[date].totalCases, covidTotals[date].newCases]);
     });
 
     const options = {
