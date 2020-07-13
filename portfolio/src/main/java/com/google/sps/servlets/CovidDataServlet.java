@@ -63,6 +63,7 @@ public class CovidDataServlet extends HttpServlet {
       } catch (ParseException pex) {
         pex.printStackTrace();
         LOGGER.log(Level.WARNING, "invalid date string");
+        continue;
       }    
 
       // Validation checks for parsing COVID-19 numbers.
@@ -71,17 +72,18 @@ public class CovidDataServlet extends HttpServlet {
       try {
         totalCases = Integer.valueOf(cells[1]);
       } catch (NumberFormatException nfex) {
-        nfex.printStackTrace();
         LOGGER.log(Level.WARNING, "invalid integer for total cases");
+        continue;
       }
       if (totalCases < 0) {
-          LOGGER.log(Level.WARNING, "number of total cases cannot be negative");
+        LOGGER.log(Level.WARNING, "number of total cases cannot be negative");
+        continue;
       }
       try {
         newCases = Integer.valueOf(cells[2]);
       } catch (NumberFormatException nfex) {
-        nfex.printStackTrace();
         LOGGER.log(Level.WARNING, "invalid integer for new cases");
+        continue;
       }
       if (newCases < 0) {
         LOGGER.log(Level.WARNING, "number of new cases cannot be negative");
