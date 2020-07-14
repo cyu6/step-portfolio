@@ -14,10 +14,74 @@
 
 package com.google.sps;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
+/**
+ * Given a list of events, returns a list of possible time ranges for the meeting request.
+ */
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    // Meeting duration cannot be longer than a day.
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+      return Arrays.asList();
+    }
+    if (events.isEmpty() || request.getAttendees().isEmpty()) {
+      return Arrays.asList(TimeRange.WHOLE_DAY);
+    }
+    
+    List<TimeRange> eventTimes = new ArrayList<>();
+    // Collect time ranges while filtering out non-attendees.
+    for (Event event : events) {
+      if (!Collections.disjoint(event.getAttendees(), request.getAttendees())) {
+        // The event and meeting request have at least one attendee in common.
+        eventTimes.add(event.getWhen());
+      }
+    }
+    if (eventTimes.isEmpty()) {
+      return Arrays.asList(TimeRange.WHOLE_DAY);
+    }
+    Collections.sort(eventTimes, TimeRange.ORDER_BY_START);
+
+    List<TimeRange> possibleTimes = new ArrayList<>();
+
+    // Check duration between start of day and start of first event.
+    if ((eventTimes.get(0).start() - TimeRange.START_OF_DAY) >= request.getDuration()) {
+      possibleTimes.add(TimeRange.fromStartEnd(
+        TimeRange.START_OF_DAY, eventTimes.get(0).start(), false)
+      );
+    }
+
+    for (int i = 0; i < eventTimes.size() - 1; i++) {
+      TimeRange current = eventTimes.get(i);
+      TimeRange next = eventTimes.get(i + 1);
+      if (!current.overlaps(next)) {
+        // Check duration between events and create a time range if there is enough time.
+        if ((next.start() - current.end()) >= request.getDuration()) {
+          possibleTimes.add(TimeRange.fromStartEnd(current.end(), next.start(), false));
+        }
+      } 
+      else {
+        // If the second event is completely contained, move on to the next event.
+        if (current.contains(next)) {
+          eventTimes.remove(next);
+          i--;
+        }
+      }
+    }
+
+    // Check duration between end of last event and end of day.
+    if ((TimeRange.END_OF_DAY - eventTimes.get(eventTimes.size() - 1).end()) >= 
+          request.getDuration()) 
+    {
+      possibleTimes.add(TimeRange.fromStartEnd(
+        eventTimes.get(eventTimes.size() - 1).end(), TimeRange.END_OF_DAY, true)
+      );
+    }
+
+    return possibleTimes;
   }
 }
