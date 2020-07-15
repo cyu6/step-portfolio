@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Returns COVID-19 data as a JSON object, e.g. {"2020-01-27": [2820, 20]} */
+/** Returns COVID-19 data as a JSON object, e.g. {"2020-01-27": {totalCases: 2820, newCases: 20}} */
 @WebServlet("/covid-data")
 public class CovidDataServlet extends HttpServlet {
 
@@ -53,8 +53,10 @@ public class CovidDataServlet extends HttpServlet {
   public void init() {
     Scanner scanner = new Scanner(getServletContext().getResourceAsStream(
         "/WEB-INF/owid-covid-data.csv"));
+    int row = 0;
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine();
+      row++;
       String[] cells = line.split(",");
 
       Date date = new Date();
@@ -71,27 +73,18 @@ public class CovidDataServlet extends HttpServlet {
       int newCases = 0;
       try {
         totalCases = Integer.valueOf(cells[1]);
-      } catch (NumberFormatException nfex) {
-        LOGGER.log(Level.WARNING, "invalid integer for total cases");
-        continue;
-      }
-      if (totalCases < 0) {
-        LOGGER.log(Level.WARNING, "number of total cases cannot be negative");
-        continue;
-      }
-      try {
         newCases = Integer.valueOf(cells[2]);
       } catch (NumberFormatException nfex) {
-        LOGGER.log(Level.WARNING, "invalid integer for new cases");
-        continue;
-      }
-      if (newCases < 0) {
-        LOGGER.log(Level.WARNING, "number of new cases cannot be negative");
+        LOGGER.log(Level.WARNING, "invalid parsing for row :" + row);
         continue;
       }
 
-      CovidData newData = new CovidData(totalCases, newCases);
+      if (totalCases < 0 || newCases < 0) {
+        LOGGER.log(Level.WARNING, "number of cases cannot be negative");
+        continue;
+      }
       
+      CovidData newData = new CovidData(totalCases, newCases);      
       covidTotals.put(date, newData);
     }
     scanner.close();
