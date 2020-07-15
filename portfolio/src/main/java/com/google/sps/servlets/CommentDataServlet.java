@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/** Maintain and return data on number of submitted comments as JSON object. */
 @WebServlet("/comment-data")
 public class CommentDataServlet extends HttpServlet {
 
