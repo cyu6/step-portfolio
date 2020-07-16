@@ -43,7 +43,7 @@ public class CommentDataServlet extends HttpServlet {
   private static final int MAX_QUERIES = 1000;
 
   // Map from time of chart update request to number of submitted comments.
-  private final LinkedHashMap<Date, Integer> totalDailyComments = new LinkedHashMap<>();
+  private final Map<Date, Integer> totalDailyComments = new LinkedHashMap<>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -55,12 +55,12 @@ public class CommentDataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query(Comment.getEntityKind());
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    int comments = datastore.prepare(query).countEntities(
+    int numComments = datastore.prepare(query).countEntities(
         FetchOptions.Builder.withLimit(MAX_QUERIES)
     );
     
     Date date = new Date();
-    totalDailyComments.put(date, comments);
+    totalDailyComments.put(date, numComments);
 
     response.sendRedirect("/random.html");
   }
