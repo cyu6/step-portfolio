@@ -19,14 +19,68 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Given a list of events, returns a list of possible time ranges for the meeting request.
- */
 public final class FindMeetingQuery {
+
+  /** Add time range to possible time slots if there is enough time between firstTime and secondTime. */
+  private void addTimeRangeIfAppropriate(Collection<TimeRange> possibleTimes, long duration, 
+    int firstTime, int secondTime, boolean inclusive) {
+    if ((secondTime - firstTime) >= duration) {
+      possibleTimes.add(TimeRange.fromStartEnd(firstTime, secondTime, inclusive));
+    }
+  }
+
+  /** Returns a list of time slots that work for mandatory attendees. */
+  private List<TimeRange> handleMandatoryAvailability(List<TimeRange> eventTimes, long duration) {
+    List<TimeRange> possibleTimes = new ArrayList<>();
+
+    addTimeRangeIfAppropriate(possibleTimes, duration, TimeRange.START_OF_DAY, 
+      eventTimes.get(0).start(), false);
+    for (int i = 0; i < eventTimes.size() - 1; i++) {
+      TimeRange current = eventTimes.get(i);
+      TimeRange next = eventTimes.get(i + 1);
+      if (!current.overlaps(next)) {
+        addTimeRangeIfAppropriate(possibleTimes, duration, current.end(), next.start(), false);
+      } 
+      else {
+        // If the second event is completely contained, move on to the next event.
+        if (current.contains(next)) {
+          eventTimes.remove(next);
+          i--;
+        }
+      }
+    }
+    addTimeRangeIfAppropriate(possibleTimes, duration, eventTimes.get(eventTimes.size() - 1).end(), 
+      TimeRange.END_OF_DAY, true);
+    
+    return possibleTimes;
+  }
+
+  /** Returns a list of time slots that work for both optional and mandatory attendees. */
+  private List<TimeRange> compareWithOptionalAvailability(Collection<TimeRange> optionalTimes, 
+    Collection<TimeRange> possibleTimes) {
+    List<TimeRange> possibleWithOptional = new ArrayList<TimeRange>(possibleTimes);
+    for (TimeRange optime : optionalTimes) {
+      for (TimeRange posstime : possibleTimes) {
+        // Time range cannot conflict with the rest of the possible times, so skip over them.
+        if (optime.end() < posstime.start()) {
+          break;
+        }
+        // Remove time range if the optional event overlaps with a possible time range. 
+        if (optime.overlaps(posstime)) {
+          possibleWithOptional.remove(posstime);
+        }
+      }
+    }
+    return possibleWithOptional;
+  }
+
+  /** Given a list of events, returns a list of possible time ranges for the meeting request. */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+    long duration = request.getDuration();
     // Meeting duration cannot be longer than a day.
-    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+    if (duration > TimeRange.WHOLE_DAY.duration()) {
       return Arrays.asList();
     }
     // No conflicts.
@@ -41,10 +95,9 @@ public final class FindMeetingQuery {
     }
     
     List<TimeRange> eventTimes = new ArrayList<>();
-    // Collect time ranges while filtering out non-attendees.
     for (Event event : events) {
       if (!Collections.disjoint(event.getAttendees(), attendees)) {
-        // The event request and meeting request have at least one attendee in common.
+        // The event and meeting request have at least one attendee in common.
         eventTimes.add(event.getWhen());
       }
     }
@@ -53,41 +106,7 @@ public final class FindMeetingQuery {
     }
     Collections.sort(eventTimes, TimeRange.ORDER_BY_START);
 
-    List<TimeRange> possibleTimes = new ArrayList<>();
-
-    // Check duration between start of day and start of first event.
-    if ((eventTimes.get(0).start() - TimeRange.START_OF_DAY) >= request.getDuration()) {
-      possibleTimes.add(TimeRange.fromStartEnd(
-        TimeRange.START_OF_DAY, eventTimes.get(0).start(), false)
-      );
-    }
-
-    for (int i = 0; i < eventTimes.size() - 1; i++) {
-      TimeRange current = eventTimes.get(i);
-      TimeRange next = eventTimes.get(i + 1);
-      if (!current.overlaps(next)) {
-        // Check duration between events and create a time range if there is enough time.
-        if ((next.start() - current.end()) >= request.getDuration()) {
-          possibleTimes.add(TimeRange.fromStartEnd(current.end(), next.start(), false));
-        }
-      } 
-      else {
-        // If the second event is completely contained, move on to the next event.
-        if (current.contains(next)) {
-          eventTimes.remove(next);
-          i--;
-        }
-      }
-    }
-
-    // Check duration between end of last event and end of day.
-    if ((TimeRange.END_OF_DAY - eventTimes.get(eventTimes.size() - 1).end()) >= 
-          request.getDuration()) 
-    {
-      possibleTimes.add(TimeRange.fromStartEnd(
-        eventTimes.get(eventTimes.size() - 1).end(), TimeRange.END_OF_DAY, true)
-      );
-    }
+    List<TimeRange> possibleTimes = handleMandatoryAvailability(eventTimes, duration);
 
     // If there were no mandatory attendees or there are no optional attendees, return now.
     if (attendees.equals(request.getOptionalAttendees()) || 
@@ -96,31 +115,15 @@ public final class FindMeetingQuery {
     }
 
     // Collect time ranges of optional attendees' events.
-    List<TimeRange> optionalTimes = new ArrayList<>();
-    for (Event event : events) {
-      if (!Collections.disjoint(event.getAttendees(), request.getOptionalAttendees())) {
-        optionalTimes.add(event.getWhen());
-      }
-    }
+    List<TimeRange> optionalTimes = events.stream().filter(
+        event -> !Collections.disjoint(event.getAttendees(), request.getOptionalAttendees()))
+        .map(Event::getWhen).collect(Collectors.toList());
     if (optionalTimes.isEmpty()) {
       return possibleTimes;
     }
     Collections.sort(optionalTimes, TimeRange.ORDER_BY_START);
 
-    List<TimeRange> possibleWithOptional = new ArrayList<TimeRange>(possibleTimes);
-    // Compare optional time ranges with the possible time ranges.
-    for (TimeRange optime : optionalTimes) {
-      for (TimeRange posstime : possibleTimes) {
-        // Time range cannot conflict with the rest of the possible times, so skip over them.
-        if (optime.end() < posstime.start()) {
-          break;
-        }
-        // Remove time range if the optional event overlaps with a possible time range. 
-        if (optime.overlaps(posstime)) {
-          possibleWithOptional.remove(posstime);
-        }
-      }
-    }
+    List<TimeRange> possibleWithOptional = compareWithOptionalAvailability(optionalTimes, possibleTimes);
 
     // Optional attendees cannot make any of the possible time slots (for mandatory attendees).
     if (possibleWithOptional.isEmpty()) {
