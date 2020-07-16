@@ -19,9 +19,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Given a list of events, returns a list of possible time ranges for the meeting request.
+ * Returns a list of possible time ranges for the meeting request given a list of events.
  */
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -33,14 +34,9 @@ public final class FindMeetingQuery {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }
     
-    List<TimeRange> eventTimes = new ArrayList<>();
-    // Collect time ranges while filtering out non-attendees.
-    for (Event event : events) {
-      if (!Collections.disjoint(event.getAttendees(), request.getAttendees())) {
-        // The event and meeting request have at least one attendee in common.
-        eventTimes.add(event.getWhen());
-      }
-    }
+    List<TimeRange> eventTimes = events.stream().filter(
+        event -> !Collections.disjoint(event.getAttendees(), request.getAttendees()))
+        .map(Event::getWhen).collect(Collectors.toList());
     if (eventTimes.isEmpty()) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }
@@ -48,7 +44,7 @@ public final class FindMeetingQuery {
 
     List<TimeRange> possibleTimes = new ArrayList<>();
 
-    // Check duration between start of day and start of first event.
+    // Add time range if there is enough time between start of day and start of first event.
     if ((eventTimes.get(0).start() - TimeRange.START_OF_DAY) >= request.getDuration()) {
       possibleTimes.add(TimeRange.fromStartEnd(
         TimeRange.START_OF_DAY, eventTimes.get(0).start(), false)
@@ -59,7 +55,7 @@ public final class FindMeetingQuery {
       TimeRange current = eventTimes.get(i);
       TimeRange next = eventTimes.get(i + 1);
       if (!current.overlaps(next)) {
-        // Check duration between events and create a time range if there is enough time.
+        // Calculate duration between events and create a time range if there is enough time.
         if ((next.start() - current.end()) >= request.getDuration()) {
           possibleTimes.add(TimeRange.fromStartEnd(current.end(), next.start(), false));
         }
@@ -73,10 +69,9 @@ public final class FindMeetingQuery {
       }
     }
 
-    // Check duration between end of last event and end of day.
+    // Add time range if there is enough time between end of last event and end of day.
     if ((TimeRange.END_OF_DAY - eventTimes.get(eventTimes.size() - 1).end()) >= 
-          request.getDuration()) 
-    {
+          request.getDuration()) {
       possibleTimes.add(TimeRange.fromStartEnd(
         eventTimes.get(eventTimes.size() - 1).end(), TimeRange.END_OF_DAY, true)
       );
