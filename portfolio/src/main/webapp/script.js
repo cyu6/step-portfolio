@@ -174,12 +174,13 @@ window.onload = () => {
   greetButton.addEventListener("click", addRandomGreeting);
   let catButton = document.getElementById("random-cat-button");
   catButton.addEventListener("click", addRandomCat);
+
 }
 
 /**
- * Create a chart and add it to the random.html page.
+ * Create a hard-coded chart about plants and add it to the random.html page.
  */
-drawChart = () => {
+drawPlantChart = () => {
   const data = new google.visualization.DataTable();
   data.addColumn('string', 'Plant');
   data.addColumn('number', 'Amount');
@@ -197,12 +198,65 @@ drawChart = () => {
   };
 
   const chart = new google.visualization.PieChart(
-    document.getElementById('chart-container')
+    document.getElementById('plant-chart-container')
   );
   chart.draw(data, options);
 }
 
+/**
+ * Fetch data about COVID-19 and use it to create a chart.
+ */
+drawCovidChart = () => {
+  fetch('/covid-data').then(response => response.json())
+  .then((covidTotals) => {
+    const data = new google.visualization.DataTable();
+    data.addColumn('date', 'Date');
+    data.addColumn('number', 'Total Cases');
+    data.addColumn('number', 'New Cases');
+    Object.keys(covidTotals).forEach((date) => {
+      data.addRow([new Date(date), covidTotals[date].totalCases, covidTotals[date].newCases]);
+    });
+
+    const options = {
+      'title': 'COVID-19 total and new cases worldwide', 
+      'width': 600, 
+      'height': 500
+    };
+
+    const chart = new google.visualization.AreaChart(
+        document.getElementById('covid-chart-container'));
+    chart.draw(data, options);
+  });
+}
+
+/**
+ * Fetch data of submitted comments and create a line chart.
+ */
+drawCommentsChart = () => {
+  fetch('/comment-data')
+  .then(response => response.json()).then((totalDailyComments) => {
+    const data = new google.visualization.DataTable();
+    data.addColumn('datetime', 'Date');
+    data.addColumn('number', 'Amount');
+    Object.keys(totalDailyComments).forEach((date) => {
+      data.addRow([new Date(date), totalDailyComments[date]]);
+    });
+
+    const options = {
+      'title': 'Number of submitted comments', 
+      'width': 400, 
+      'height': 300
+    };
+
+    const chart = new google.visualization.LineChart(
+      document.getElementById('comment-chart-container')
+    );
+    
+    chart.draw(data, options);
+  });
+}
+
 google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-
-
+google.charts.setOnLoadCallback(drawPlantChart);
+google.charts.setOnLoadCallback(drawCovidChart);
+google.charts.setOnLoadCallback(drawCommentsChart);
