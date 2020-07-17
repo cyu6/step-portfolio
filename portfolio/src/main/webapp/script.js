@@ -17,6 +17,9 @@ const GREETING_CHOICES =
 const CAT_IMAGES = ["images/kitten-in-bed.jpg", "images/sleepy-kitten.jpg", "images/kitten-covers.jpg", 
                     "images/silver-tabby.jpg", "images/teddy-cat.jpg"];
 const POST_ID = "0cb628857f3c4c77bf7f9a879a6ec21d";
+const DEFAULT_COMMENT_LIMIT = 5;
+const PLACEHOLDER_URL = "images/squishycat.jpeg";
+const LOGGED_IN_STATUS = "logged in";
 
 /**
  * Adds a random greeting to the page.
@@ -63,6 +66,7 @@ getBlogPost = () => {
  * Fetch comments from server and insert them on blog page.
  */
 getBlogComments = (commentLimit) => {
+  if (commentLimit === null) commentLimit = DEFAULT_COMMENT_LIMIT;
   fetch("/data?comment-limit=" + commentLimit).then(response => response.json()).then((comments) => {
     const commentsContainer = document.getElementById("submitted-comments-container");
     commentsContainer.innerHTML = '';
@@ -81,6 +85,14 @@ createCommentElement = (comment) => {
   const commentInputElement = document.createElement('p');
   commentInputElement.innerText = comment.commentInput;
 
+  const fileElement = document.createElement('img');
+  fileElement.style.width = '50px';
+  if (comment.fileUrl != null) {
+    fileElement.src = comment.fileUrl;
+  } else {
+    fileElement.src = PLACEHOLDER_URL;
+  }
+
   const deleteButtonElement = document.createElement('button');
   deleteButtonElement.innerText = 'Delete';
   deleteButtonElement.addEventListener('click', () => {
@@ -90,6 +102,8 @@ createCommentElement = (comment) => {
 
   commentBlock.appendChild(nameElement);
   commentBlock.appendChild(commentInputElement);
+  commentBlock.appendChild(fileElement);
+  commentBlock.appendChild(document.createElement('br'));
   commentBlock.appendChild(deleteButtonElement);
   commentBlock.appendChild(document.createElement('hr'));
   return commentBlock;
@@ -103,15 +117,50 @@ deleteComment = async (comment) => {
   getBlogComments(window.localStorage.getItem("comment-limit"));
 }
 
+/** Fetch Blobstore URL and set it to HTML form. */
+fetchBlobstoreUrlAndSetForm = () => {
+  fetch("/blobstore-upload-url").then(response => response.text()).then((urlstring) => {
+    const commentsForm = document.getElementById('comment-submission-form');
+    commentsForm.action = urlstring;
+  });
+}
+                                                                        
+/** Fetch login status and display comments form or login link accordingly. */
+getLoginStatus = () => {
+  fetch("/login").then(response => response.text()).then((result) => {
+    results = result.split("\n");
+    const commentsSubmissionForm = document.getElementById("comment-submission-form");    
+    const loginContainer = document.getElementById("login-link-container");
+    const logoutContainer = document.getElementById("logout-link-container");
+    
+    if (results[0] == LOGGED_IN_STATUS) {
+      commentsSubmissionForm.style.display = "inline";
+
+      const logoutElement = document.getElementById("logout-link");
+      logoutElement.href = results[1];
+      
+      loginContainer.style.display = "none";
+      logoutContainer.style.display = "inline";
+    } else {
+      commentsSubmissionForm.style.display = "none";
+
+      const loginElement = document.getElementById("login-link");
+      loginElement.href = results[1];
+
+      loginContainer.style.display = "inline";
+      logoutContainer.style.display = "none";
+    }
+  });
+}
+
 /**
  * Fetch page data and set up HTML elements on load.
  */
 window.onload = () => {
   getBlogPost();
-
-  let commentLimit = window.localStorage.getItem("comment-limit");
-  if (!commentLimit) commentLimit = 5;
-  getBlogComments(commentLimit);
+  getBlogComments(window.localStorage.getItem("comment-limit"));
+  fetchBlobstoreUrlAndSetForm();
+  getLoginStatus();
 
   // Refresh comment limit value in local storage.
   let commentInputContainer = document.getElementById("comment-limit");
@@ -119,7 +168,7 @@ window.onload = () => {
     const newLimit = document.getElementById("comment-limit").value;
     window.localStorage.setItem("comment-limit", newLimit);
   }
-  
+
   // Add event listeners to buttons
   let greetButton = document.getElementById("greeting-button");
   greetButton.addEventListener("click", addRandomGreeting);
@@ -211,4 +260,3 @@ google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawPlantChart);
 google.charts.setOnLoadCallback(drawCovidChart);
 google.charts.setOnLoadCallback(drawCommentsChart);
-
