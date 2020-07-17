@@ -19,29 +19,32 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class FindMeetingQuery {
 
-  /** Add time range to possible time slots if there is enough time between firstTime and secondTime. */
-  private void addTimeRangeIfAppropriate(Collection<TimeRange> possibleTimes, long duration, 
-    int firstTime, int secondTime, boolean inclusive) {
+  /** Create a meeting timeslot if there is enough time between firstTime and secondTime. */
+  private Optional<TimeRange> createDuration(long duration, int firstTime, int secondTime, 
+    boolean inclusive) {
     if ((secondTime - firstTime) >= duration) {
-      possibleTimes.add(TimeRange.fromStartEnd(firstTime, secondTime, inclusive));
+      return Optional.of(TimeRange.fromStartEnd(firstTime, secondTime, inclusive));
     }
+    return Optional.empty();
   }
 
   /** Returns a list of time slots that work for mandatory attendees. */
-  private List<TimeRange> handleMandatoryAvailability(List<TimeRange> eventTimes, long duration) {
+  private List<TimeRange> findAvailabilityForMandatoryAttendees(
+    List<TimeRange> eventTimes, long duration) {
     List<TimeRange> possibleTimes = new ArrayList<>();
 
-    addTimeRangeIfAppropriate(possibleTimes, duration, TimeRange.START_OF_DAY, 
-      eventTimes.get(0).start(), false);
+    createDuration(duration, TimeRange.START_OF_DAY, eventTimes.get(0).start(), false)
+    .ifPresent(possibleTimes::add);
     for (int i = 0; i < eventTimes.size() - 1; i++) {
       TimeRange current = eventTimes.get(i);
       TimeRange next = eventTimes.get(i + 1);
       if (!current.overlaps(next)) {
-        addTimeRangeIfAppropriate(possibleTimes, duration, current.end(), next.start(), false);
+        createDuration(duration, current.end(), next.start(), false).ifPresent(possibleTimes::add);
       } 
       else {
         // If the second event is completely contained, move on to the next event.
@@ -51,8 +54,8 @@ public final class FindMeetingQuery {
         }
       }
     }
-    addTimeRangeIfAppropriate(possibleTimes, duration, eventTimes.get(eventTimes.size() - 1).end(), 
-      TimeRange.END_OF_DAY, true);
+    createDuration(duration, eventTimes.get(eventTimes.size() - 1).end(), TimeRange.END_OF_DAY, true)
+    .ifPresent(possibleTimes::add);
     
     return possibleTimes;
   }
@@ -61,15 +64,15 @@ public final class FindMeetingQuery {
   private List<TimeRange> compareWithOptionalAvailability(Collection<TimeRange> optionalTimes, 
     Collection<TimeRange> possibleTimes) {
     List<TimeRange> possibleWithOptional = new ArrayList<TimeRange>(possibleTimes);
-    for (TimeRange optime : optionalTimes) {
-      for (TimeRange posstime : possibleTimes) {
+    for (TimeRange optionalTime : optionalTimes) {
+      for (TimeRange possibleTime : possibleTimes) {
         // Time range cannot conflict with the rest of the possible times, so skip over them.
-        if (optime.end() < posstime.start()) {
+        if (optionalTime.end() < possibleTime.start()) {
           break;
         }
         // Remove time range if the optional event overlaps with a possible time range. 
-        if (optime.overlaps(posstime)) {
-          possibleWithOptional.remove(posstime);
+        if (optionalTime.overlaps(possibleTime)) {
+          possibleWithOptional.remove(possibleTime);
         }
       }
     }
@@ -106,7 +109,7 @@ public final class FindMeetingQuery {
     }
     Collections.sort(eventTimes, TimeRange.ORDER_BY_START);
 
-    List<TimeRange> possibleTimes = handleMandatoryAvailability(eventTimes, duration);
+    List<TimeRange> possibleTimes = findAvailabilityForMandatoryAttendees(eventTimes, duration);
 
     // If there were no mandatory attendees or there are no optional attendees, return now.
     if (attendees.equals(request.getOptionalAttendees()) || 
