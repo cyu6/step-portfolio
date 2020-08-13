@@ -27,13 +27,11 @@ public final class FindMeetingQuery {
     
   /** Returns a list of possible time ranges for the meeting request given a list of events. */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    long duration = request.getDuration();
     // Meeting duration cannot be longer than a day.
-    if (duration > TimeRange.WHOLE_DAY.duration()) {
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
       return Arrays.asList();
     }
-    // No conflicts.
-    if (events.isEmpty()) {
+    if (events.isEmpty() || request.getAttendees().isEmpty()) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }
 
@@ -42,14 +40,10 @@ public final class FindMeetingQuery {
     if (attendees.isEmpty()) {
       attendees = request.getOptionalAttendees();
     }
-    
-    List<TimeRange> eventTimes = new ArrayList<>();
-    for (Event event : events) {
-      if (!Collections.disjoint(event.getAttendees(), attendees)) {
-        // The event and meeting request have at least one attendee in common.
-        eventTimes.add(event.getWhen());
-      }
-    }
+
+    List<TimeRange> eventTimes = events.stream().filter(
+        event -> !Collections.disjoint(event.getAttendees(), request.getAttendees()))
+        .map(Event::getWhen).collect(Collectors.toList());
     if (eventTimes.isEmpty()) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }

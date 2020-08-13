@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script.js"></script>
   </head>
   <body>
@@ -16,6 +17,16 @@
         <li><a href="random.html">random</a></li>
       </ul>
     </div> 
+    
+    <div class="random-charts">
+      <h1>interesting charts</h1> 
+      <div id="plant-chart-container"></div>
+      <div id="covid-chart-container"></div>
+      <form id="comment-update-button" method="post" action="/comment-data">
+        <input type="submit" name="update-comments" value="Update Comments Chart">
+      </form>
+      <div id="comment-chart-container"></div>
+    </div>
     
     <div class="random-content">
       <h1>here are some random things about me</h1>
